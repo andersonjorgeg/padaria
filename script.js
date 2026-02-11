@@ -103,4 +103,95 @@ document.addEventListener('DOMContentLoaded', () => {
         countersStarted = true;
     }
 
+    // =========================================
+    // Testimonial Carousel
+    // =========================================
+    const track = document.querySelector('.carousel-track');
+    const slides = document.querySelectorAll('.testimonial-slide');
+    const dots = document.querySelectorAll('.dot');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+
+    if (track && slides.length > 0) {
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+        let slideInterval;
+
+        // Function to show specific slide
+        const showSlide = (index) => {
+            // Handle index bounds (circular)
+            if (index >= totalSlides) {
+                currentSlide = 0;
+            } else if (index < 0) {
+                currentSlide = totalSlides - 1;
+            } else {
+                currentSlide = index;
+            }
+
+            // Move the track
+            const amountToMove = -100 * currentSlide;
+            track.style.transform = `translateX(${amountToMove}%)`;
+
+            // Update dots
+            dots.forEach(dot => dot.classList.remove('active'));
+            if (dots[currentSlide]) dots[currentSlide].classList.add('active');
+        };
+
+        // Next Slide
+        const nextSlide = () => {
+            showSlide(currentSlide + 1);
+        };
+
+        // Prev Slide
+        const prevSlide = () => {
+            showSlide(currentSlide - 1);
+        };
+
+        // Auto Play
+        const startSlideShow = () => {
+            // Clear any existing interval to avoid multiple intervals
+            if (slideInterval) clearInterval(slideInterval);
+            slideInterval = setInterval(nextSlide, 5000); // Change every 5 seconds
+        };
+
+        const stopSlideShow = () => {
+            clearInterval(slideInterval);
+        };
+
+        // Event Listeners
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                nextSlide();
+                stopSlideShow();
+                startSlideShow();
+            });
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                prevSlide();
+                stopSlideShow();
+                startSlideShow();
+            });
+        }
+
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                showSlide(index);
+                stopSlideShow();
+                startSlideShow();
+            });
+        });
+
+        // Pause on hover
+        const carouselContainer = document.querySelector('.carousel-container');
+        if (carouselContainer) {
+            carouselContainer.addEventListener('mouseenter', stopSlideShow);
+            carouselContainer.addEventListener('mouseleave', startSlideShow);
+        }
+
+        // Initialize
+        startSlideShow();
+    }
+
 });
